@@ -1,0 +1,14 @@
+<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\FoodTruckHound.Core\FoodTruckHound.Core.csproj" />
+    <ProjectReference Include="..\FoodTruckHound.Data\FoodTruckHound.Data.csproj" />
+    <ProjectReference Include="..\FoodTruckHound.Models\FoodTruckHound.Models.csproj" />
+  </ItemGroup>
+
+
+</Project>
