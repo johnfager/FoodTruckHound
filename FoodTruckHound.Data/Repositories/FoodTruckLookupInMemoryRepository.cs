@@ -5,13 +5,17 @@ using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Linq;
-using System.Runtime.InteropServices;
 using System.Threading.Tasks;
 
 namespace FoodTruckHound.Data.Repositories
 {
+    /// <summary>
+    /// A quick proof of concept functional repository to store the data in memory.
+    /// </summary>
     public class FoodTruckLookupInMemoryRepository : _baseRepository, IFoodTruckLookupRepository
     {
+        private static readonly object _lock = new object();
+
         // in memory representation of food trucks
         private static FoodTruckInfo[] _foodTrucks;
 
@@ -19,10 +23,8 @@ namespace FoodTruckHound.Data.Repositories
 
         private readonly IFoodTruckDataService _foodTruckDataService;
 
-        private readonly IMemoryCache _memoryCache;
 
-
-        public FoodTruckLookupInMemoryRepository(IFoodTruckDataService foodTruckDataService, IMemoryCache memoryCache, ILogger logger) : base(logger)
+        public FoodTruckLookupInMemoryRepository(IFoodTruckDataService foodTruckDataService, ILogger logger) : base(logger)
         {
             _foodTruckDataService = foodTruckDataService;
         }
@@ -30,13 +32,11 @@ namespace FoodTruckHound.Data.Repositories
         public async Task<FoodTruckInfo[]> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
         {
 
-            // TODO: Verify if the data service needs to run or not. If the data is very stale, consider returning an error to try back in a few minutes.
+            // TODO: Verify if the data service needs to run or not. If the data is stale, consider returning an error asking the client to try back in a few minutes.
 
             bool attemptedRefresh = false;
 
-            _memoryCache.TryGetValue<FoodTruckInfo[]>(_cacheKey, out FoodTruckInfo[] data);
-
-            if (data == null || !data.Any() || _foodTruckDataService.LastRefreshedOnUtc.AddMinutes(_foodTruckDataService.RecommendedRefreshInMinutes) < DateTime.UtcNow)
+            if (_foodTrucks == null || !_foodTrucks.Any() || _foodTruckDataService.LastRefreshedOnUtc.AddMinutes(_foodTruckDataService.RecommendedRefreshInMinutes) < DateTime.UtcNow)
             {
                 attemptedRefresh = true;
                 var freshData = await _foodTruckDataService.RefreshRemoteDataAsync();
@@ -54,12 +54,17 @@ namespace FoodTruckHound.Data.Repositories
                         _logger.LogError(ex, ex.Message);
                     }
                 }
-                _memoryCache.Set(_cacheKey, freshData);
-                data = freshData; // set the data to the new set
+                if(freshData != null)
+                {
+                    lock (_lock)
+                    {
+                        _foodTrucks = freshData; // set the data to the new set
+                    }
+                }
             }
 
             // recheck for any issues
-            if (data is null || !data.Any())
+            if (_foodTrucks is null || !_foodTrucks.Any())
             {
                 // an example of more robust exceptions
                 if (attemptedRefresh)
@@ -73,7 +78,7 @@ namespace FoodTruckHound.Data.Repositories
             }
 
             // return valid data
-            return data;
+            return _foodTrucks;
         }
     }
 }
