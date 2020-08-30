@@ -1,12 +1,13 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FoodTruckHound.Core.Services;
+using Microsoft.Extensions.Logging;
 
 namespace FoodTruckHound.Data.Services
 {
-    public class _baseService
+    public abstract class _baseService<TService> where TService : class, IService
     {
-        protected ILogger _logger;
+        protected ILogger<TService> _logger;
 
-        public _baseService(ILogger logger)
+        public _baseService(ILogger<TService> logger)
         {
             logger = _logger;
         }

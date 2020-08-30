@@ -2,7 +2,6 @@
 using FoodTruckHound.Models;
 using System;
 using System.Collections.Generic;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace FoodTruckHound.Data.Repositories
@@ -12,7 +11,7 @@ namespace FoodTruckHound.Data.Repositories
     /// </summary>
     public class FoodTruckSomeOtherStoreRepository : IFoodTruckLookupRepository
     {
-        public Task<FoodTruckInfo[]> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
+        public Task<List<FoodTruckInfo>> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
         {
             throw new NotImplementedException();
         }

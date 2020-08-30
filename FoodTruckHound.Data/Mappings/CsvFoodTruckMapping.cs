@@ -1,9 +1,5 @@
 ﻿using FoodTruckHound.Models;
-using System;
-using System.Collections.Generic;
-using System.Text;
 using TinyCsvParser.Mapping;
-using TinyCsvParser.TypeConverter;
 
 namespace FoodTruckHound.Data.Mappings
 {
@@ -12,28 +8,16 @@ namespace FoodTruckHound.Data.Mappings
 
         public CsvFoodTruckMapping() : base()
         {
-            // TODO: Clean up
-
-            //MapProperty(0, x => x.Make);
-            //MapProperty(1, x => x.Model);
-            //MapProperty(2, x => x.Type, new EnumConverter<AutomobileType>());
-            //MapProperty(3, x => x.Year);
-            //MapProperty(4, x => x.Price);
-            //MapProperty(5, x => x.Comment, new AutomobileCommentTypeConverter());
+            MapProperty(0, x => x.LocationId);
+            MapProperty(1, x => x.DisplayName);
+            MapProperty(2, x => x.FacilityType);
+            MapProperty(4, x => x.LocationDescription);
+            MapProperty(5, x => x.Address);
+            MapProperty(9, x => x.Permit);
+            MapProperty(10, x => x.Status);
+            MapProperty(11, x =>  x.FoodItems);
+            MapProperty(14, x => x.Latitude);
+            MapProperty(15, x => x.Longitude);
         }
     }
-
-    //internal class AutomobileCommentTypeConverter : ITypeConverter<AutomobileComment>
-    //{
-    //    public Type TargetType => typeof(AutomobileComment);
-
-    //    public bool TryConvert(string value, out AutomobileComment result)
-    //    {
-    //        result = new AutomobileComment
-    //        {
-    //            Comment = value
-    //        };
-    //        return true;
-    //    }
-    //}
 }

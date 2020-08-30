@@ -4,6 +4,7 @@ using FoodTruckHound.Models;
 using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -12,34 +13,47 @@ namespace FoodTruckHound.Data.Repositories
     /// <summary>
     /// A quick proof of concept functional repository to store the data in memory.
     /// </summary>
-    public class FoodTruckLookupInMemoryRepository : _baseRepository, IFoodTruckLookupRepository
+    public class FoodTruckLookupInMemoryRepository : _baseRepository<FoodTruckLookupInMemoryRepository>, IFoodTruckLookupRepository
     {
         private static readonly object _lock = new object();
 
         // in memory representation of food trucks
-        private static FoodTruckInfo[] _foodTrucks;
+        private static List<FoodTruckInfo> _foodTrucks;
 
-        private static readonly string _cacheKey = $"{nameof(FoodTruckLookupInMemoryRepository)}.Data";
+        /// <summary>
+        /// Keeps the latest refresh time for the data from the service.
+        /// </summary>
+        private static DateTime _lastRefreshedOnUtc;
+
+        /// <summary>
+        /// The recommended number of minutes after which the provider recommends refreshing data.
+        /// </summary>
+        private static readonly int _recommendedRefreshInMinutes = 300;
+
+        // ---------
 
         private readonly IFoodTruckDataService _foodTruckDataService;
 
 
-        public FoodTruckLookupInMemoryRepository(IFoodTruckDataService foodTruckDataService, ILogger logger) : base(logger)
+        public FoodTruckLookupInMemoryRepository(IFoodTruckDataService foodTruckDataService, ILogger<FoodTruckLookupInMemoryRepository> logger) : base(logger)
         {
             _foodTruckDataService = foodTruckDataService;
         }
 
-        public async Task<FoodTruckInfo[]> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
+        public async Task<List<FoodTruckInfo>> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
         {
 
             // TODO: Verify if the data service needs to run or not. If the data is stale, consider returning an error asking the client to try back in a few minutes.
 
             bool attemptedRefresh = false;
 
-            if (_foodTrucks == null || !_foodTrucks.Any() || _foodTruckDataService.LastRefreshedOnUtc.AddMinutes(_foodTruckDataService.RecommendedRefreshInMinutes) < DateTime.UtcNow)
+            if (_foodTrucks == null || !_foodTrucks.Any() || _lastRefreshedOnUtc.AddMinutes(_recommendedRefreshInMinutes) < DateTime.UtcNow)
             {
+                _logger.LogTrace($"{nameof(FoodTruckLookupInMemoryRepository)}.{nameof(FindByLocationAsync)} - Refreshing via service");
+
                 attemptedRefresh = true;
                 var freshData = await _foodTruckDataService.RefreshRemoteDataAsync();
+     
                 if (freshData is null || !freshData.Any())
                 {
                     // an example of throwing an exception but capturing and logging it silently; logging layer can handle alerts and notices to the team
@@ -54,11 +68,12 @@ namespace FoodTruckHound.Data.Repositories
                         _logger.LogError(ex, ex.Message);
                     }
                 }
-                if(freshData != null)
+                if (freshData != null)
                 {
                     lock (_lock)
                     {
                         _foodTrucks = freshData; // set the data to the new set
+                        _lastRefreshedOnUtc = DateTime.UtcNow;
                     }
                 }
             }

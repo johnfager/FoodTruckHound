@@ -11,6 +11,8 @@ namespace FoodTruckHound.Models
         /// </summary>
         public string HoundKey { get; set; }
 
+        public int LocationId { get; set; }
+
         public string DisplayName { get; set; }
 
         public string FacilityType { get; set; }
@@ -23,7 +25,7 @@ namespace FoodTruckHound.Models
 
         public string Status { get; set; }
 
-        public string[] FoodItems { get; set; }
+        public string FoodItems { get; set; }
 
         public decimal Latitude { get; set; }
 

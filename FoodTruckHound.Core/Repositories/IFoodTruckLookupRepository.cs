@@ -1,9 +1,10 @@
 ﻿using FoodTruckHound.Models;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 
 namespace FoodTruckHound.Core.Repositories
 {
-    public interface IFoodTruckLookupRepository
+    public interface IFoodTruckLookupRepository : IRepository
     {
         /// <summary>
         /// Locates the closest food trucks.
@@ -12,6 +13,6 @@ namespace FoodTruckHound.Core.Repositories
         /// <param name="latitude">Starting latitude</param>
         /// <param name="maxCount">The maximum count of food trucks to return</param>
         /// <returns></returns>
-        public Task<FoodTruckInfo[]> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5);
+        public Task<List<FoodTruckInfo>> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5);
     }
 }
