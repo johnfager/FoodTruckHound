@@ -1,14 +1,16 @@
-﻿using Microsoft.Extensions.Logging;
+﻿using FoodTruckHound.Core.Repositories;
+using Microsoft.Extensions.Logging;
 
 namespace FoodTruckHound.Data.Repositories
 {
-    public class _baseRepository
+    public abstract class _baseRepository<TRepository> where TRepository : class, IRepository
     {
-        protected ILogger _logger;
+        protected ILogger<TRepository> _logger;
 
-        public _baseRepository(ILogger logger)
+        public _baseRepository(ILogger<TRepository> logger)
         {
-            logger = _logger;
+            _logger = logger;
         }
+
     }
 }
