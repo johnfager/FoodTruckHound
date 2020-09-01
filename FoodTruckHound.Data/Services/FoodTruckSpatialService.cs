@@ -84,14 +84,6 @@ namespace FoodTruckHound.Data.Services
             return value;
         }
 
-
-
-        #endregion
-
-        #region classes
-
-
-
         #endregion
     }
 

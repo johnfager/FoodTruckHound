@@ -1,21 +1,14 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using FoodTruckHound.Core.Configuration;
 using FoodTruckHound.Core.Repositories;
 using FoodTruckHound.Core.Services;
+using FoodTruckHound.Data.Configuration;
 using FoodTruckHound.Data.Repositories;
 using FoodTruckHound.Data.Services;
 using FoodTruckHound.Data.Services.SfGov;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
-using Microsoft.AspNetCore.HttpsPolicy;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
-using Microsoft.Extensions.Logging;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 

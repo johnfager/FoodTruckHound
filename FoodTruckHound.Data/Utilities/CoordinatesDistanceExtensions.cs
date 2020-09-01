@@ -30,7 +30,7 @@ namespace FoodTruckHound.Data.Utilities
 
             var output = unitOfLength.ConvertFromMiles(dist);
 
-            // very close calculations
+            // TODO: Very close calculations come out at NaN with this equation, but there could be other scenarios that aren't working as expected. Some larger scale programatic tests should be done to be certain.
             if (double.IsNaN(output))
             {
                 return 0;

@@ -1,5 +1,5 @@
-﻿using FoodTruckHound.Core.Configuration;
-using FoodTruckHound.Core.Services;
+﻿using FoodTruckHound.Core.Services;
+using FoodTruckHound.Data.Configuration;
 using FoodTruckHound.Data.Mappings;
 using FoodTruckHound.Models;
 using Microsoft.Extensions.Logging;

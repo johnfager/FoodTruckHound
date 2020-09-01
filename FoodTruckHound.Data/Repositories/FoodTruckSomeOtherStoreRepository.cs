@@ -14,6 +14,7 @@ namespace FoodTruckHound.Data.Repositories
 
         public Task<List<FoodTruckInfo>> GetFoodTrucksAsync()
         {
+            // TODO: Wire up to some other storage medium later on to replace the in-memory one.
             throw new NotImplementedException("You stopped here and remember to go back...");
         }
     }
