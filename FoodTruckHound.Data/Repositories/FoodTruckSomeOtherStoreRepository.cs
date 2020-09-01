@@ -11,9 +11,10 @@ namespace FoodTruckHound.Data.Repositories
     /// </summary>
     public class FoodTruckSomeOtherStoreRepository : IFoodTruckLookupRepository
     {
-        public Task<List<FoodTruckInfo>> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
+
+        public Task<List<FoodTruckInfo>> GetFoodTrucksAsync()
         {
-            throw new NotImplementedException();
+            throw new NotImplementedException("You stopped here and remember to go back...");
         }
     }
 }

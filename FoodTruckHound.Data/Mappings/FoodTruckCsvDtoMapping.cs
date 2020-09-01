@@ -3,10 +3,10 @@ using TinyCsvParser.Mapping;
 
 namespace FoodTruckHound.Data.Mappings
 {
-    internal class CsvFoodTruckMapping : CsvMapping<FoodTruckInfo>
+    internal class FoodTruckCsvDtoMapping : CsvMapping<FoodTruckInfo>
     {
 
-        public CsvFoodTruckMapping() : base()
+        public FoodTruckCsvDtoMapping() : base()
         {
             MapProperty(0, x => x.LocationId);
             MapProperty(1, x => x.DisplayName);

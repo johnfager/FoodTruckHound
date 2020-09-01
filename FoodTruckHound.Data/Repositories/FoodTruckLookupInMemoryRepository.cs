@@ -1,12 +1,12 @@
-﻿using FoodTruckHound.Core.Repositories;
+﻿using FoodTruckHound.Models;
+using FoodTruckHound.Core.Repositories;
 using FoodTruckHound.Core.Services;
-using FoodTruckHound.Models;
-using Microsoft.Extensions.Caching.Memory;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Security.Cryptography.X509Certificates;
 
 namespace FoodTruckHound.Data.Repositories
 {
@@ -40,27 +40,26 @@ namespace FoodTruckHound.Data.Repositories
             _foodTruckDataService = foodTruckDataService;
         }
 
-        public async Task<List<FoodTruckInfo>> FindByLocationAsync(decimal longitude, decimal latitude, int maxCount = 5)
+        public async Task<List<FoodTruckInfo>> GetFoodTrucksAsync()
         {
-
             // TODO: Verify if the data service needs to run or not. If the data is stale, consider returning an error asking the client to try back in a few minutes.
 
             bool attemptedRefresh = false;
 
             if (_foodTrucks == null || !_foodTrucks.Any() || _lastRefreshedOnUtc.AddMinutes(_recommendedRefreshInMinutes) < DateTime.UtcNow)
             {
-                _logger.LogTrace($"{nameof(FoodTruckLookupInMemoryRepository)}.{nameof(FindByLocationAsync)} - Refreshing via service");
+                _logger.LogTrace($"{nameof(FoodTruckLookupInMemoryRepository)}.{nameof(GetFoodTrucksAsync)} - Refreshing via service");
 
                 attemptedRefresh = true;
                 var freshData = await _foodTruckDataService.RefreshRemoteDataAsync();
-     
+
                 if (freshData is null || !freshData.Any())
                 {
                     // an example of throwing an exception but capturing and logging it silently; logging layer can handle alerts and notices to the team
                     try
                     {
                         // throw to get context
-                        throw new Exception($"No data was found in the {nameof(FoodTruckInfo)} array returned from {nameof(IFoodTruckDataService)}.{nameof(_foodTruckDataService.RefreshRemoteDataAsync)}() method.");
+                        throw new Exception($"No data was found in the {nameof(GetFoodTrucksAsync)} array returned from {nameof(IFoodTruckDataService)}.{nameof(_foodTruckDataService.RefreshRemoteDataAsync)}() method.");
                     }
                     catch (Exception ex)
                     {
@@ -72,7 +71,9 @@ namespace FoodTruckHound.Data.Repositories
                 {
                     lock (_lock)
                     {
-                        _foodTrucks = freshData; // set the data to the new set
+                        // TODO: Verify with the city that REQUESTED and APPROVED ARE ACTIVE
+                        // TODO: Log and verify issues with valid records that do not have lat or long set
+                        _foodTrucks = freshData.Where(x => (x.Status == "REQUESTED" || x.Status == "APPROVED") && x.Latitude != 0 && x.Longitude != 0).ToList(); // set the data to the new set of active trucks
                         _lastRefreshedOnUtc = DateTime.UtcNow;
                     }
                 }
@@ -84,11 +85,11 @@ namespace FoodTruckHound.Data.Repositories
                 // an example of more robust exceptions
                 if (attemptedRefresh)
                 {
-                    throw new Exception($"No data was found in the {nameof(FoodTruckInfo)} array even after attempting to refresh the data set.");
+                    throw new Exception($"No data was found in the {nameof(_foodTrucks)} array even after attempting to refresh the data set.");
                 }
                 else
                 {
-                    throw new Exception($"No data was found in the {nameof(FoodTruckInfo)} array.");
+                    throw new Exception($"No data was found in the {nameof(_foodTrucks)} array.");
                 }
             }
 

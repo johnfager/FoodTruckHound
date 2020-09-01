@@ -1,15 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace FoodTruckHound.Models
+﻿namespace FoodTruckHound.Models
 {
     public class FoodTruckInfo
-    {
-        /// <summary>
-        /// The internal unique key used by Food Truck Hound to identify unique food trucks.
-        /// </summary>
-        public string HoundKey { get; set; }
+    {  
 
         public int LocationId { get; set; }
 
@@ -27,17 +19,14 @@ namespace FoodTruckHound.Models
 
         public string FoodItems { get; set; }
 
-        public decimal Latitude { get; set; }
+        public double Latitude { get; set; }
 
-        public decimal Longitude { get; set; }
+        public double Longitude { get; set; }
 
         /// <summary>
         /// The URL of the food truck's schedule.
         /// </summary>
         /// <remarks>This URL is populated but is very slow responding and troubling. Looking for better schedule information.</remarks>
         public string ScheduleUrl { get; set; }
-
-        public HoursOfOperation[] Schedule { get; set; }
-
     }
 }

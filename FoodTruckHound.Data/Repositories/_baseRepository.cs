@@ -9,7 +9,7 @@ namespace FoodTruckHound.Data.Repositories
 
         public _baseRepository(ILogger<TRepository> logger)
         {
-            logger = _logger;
+            _logger = logger;
         }
 
     }

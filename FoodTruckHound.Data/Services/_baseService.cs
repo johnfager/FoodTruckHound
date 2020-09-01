@@ -9,7 +9,7 @@ namespace FoodTruckHound.Data.Services
 
         public _baseService(ILogger<TService> logger)
         {
-            logger = _logger;
+            _logger = logger;
         }
     }
 }

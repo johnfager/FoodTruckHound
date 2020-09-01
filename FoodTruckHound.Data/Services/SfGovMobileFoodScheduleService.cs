@@ -70,7 +70,7 @@ namespace FoodTruckHound.Data.Services.SfGov
 
             // setup the parsing options
             var csvParserOptions = new CsvParserOptions(true, ',');
-            var csvParser = new CsvParser<FoodTruckInfo>(csvParserOptions, new CsvFoodTruckMapping()); // mapping created based off of CSV documentation
+            var csvParser = new CsvParser<FoodTruckInfo>(csvParserOptions, new FoodTruckCsvDtoMapping()); // mapping created based off of CSV documentation
 
             var records = csvParser.ReadFromStream(csvData, Encoding.UTF8);
             var data = records.Select(x => x.Result).ToList();
